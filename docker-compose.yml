@@ -1,0 +1,192 @@
+version: '3.2'
+
+services:
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    expose:
+      - 80
+      - 81
+      - 443
+    volumes:
+      - ./:/var/www/html/docker-source
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  php73:
+    build: ./php73/php-fpm
+    container_name: php73
+    working_dir: /var/www/html/docker-source
+    expose:
+      - 9000
+    volumes:
+      - ./:/var/www/html/docker-source
+      - ./php73/supervisor/logs:/var/log/cache
+      - ./php73/supervisor/conf.d:/etc/supervisor/conf.d
+      - ./php73/php-fpm/config/php-ini-overrides.ini:/etc/php/7.4/fpm/conf.d/99-overrides.ini
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  php74:
+    build: ./php74/php-fpm
+    container_name: php74
+    working_dir: /var/www/html/docker-source
+    expose:
+      - 9000
+    volumes:
+      - ./:/var/www/html/docker-source
+      - ./php74/supervisor/logs:/var/log/cache
+      - ./php74/supervisor/conf.d:/etc/supervisor/conf.d
+      - ./php74/php-fpm/config/php-ini-overrides.ini:/etc/php/7.4/fpm/conf.d/99-overrides.ini
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  php80:
+    build: ./php80/php-fpm
+    container_name: php80
+    working_dir: /var/www/html/docker-source
+    volumes:
+      - .:/var/www/html/docker-source
+      - ./php80/supervisor/conf.d:/etc/supervisor/conf.d
+      - ./php80/supervisor/logs:/var/log/cache
+      - ./php80/php-fpm/conf.d/php-ini-overrides.ini:/etc/php/8.0/fpm/conf.d/99-overrides.ini
+    expose:
+      - 9000
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  percona8:
+    build: ./percona8
+    container_name: percona8
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345@
+      #      - MYSQL_DATABASE=base_db
+      #      - MYSQL_USER=base_user
+      #      - MYSQL_PASSWORD=base_pass
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    expose:
+      - 3306
+    volumes:
+      - ./percona8/data:/var/lib/mysql
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  mysql8:
+    build: ./mysql8
+    container_name: mysql8
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345@
+      #      - MYSQL_DATABASE=base_db
+      #      - MYSQL_USER=base_user
+      #      - MYSQL_PASSWORD=base_pass
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    expose:
+      - 3306
+    volumes:
+      - ./mysql8/data:/var/lib/mysql
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  elasticsearch5:
+    build: ./elasticsearch5
+    container_name: elasticsearch5
+    volumes:
+      - ./elasticsearch5/log:/var/log/elasticsearch
+      - ./elasticsearch5/data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    #      - ELASTICSEARCH_HEAP_SIZE=1g
+    expose:
+      - 9200
+      - 9300
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  elasticsearch71:
+    build: ./elasticsearch71
+    container_name: elasticsearch71
+    volumes:
+      - ./elasticsearch71/log:/var/log/elasticsearch
+      - ./elasticsearch71/data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    #      - ELASTICSEARCH_HEAP_SIZE=1g
+    expose:
+      - 9200
+      - 9300
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  elasticsearch712:
+    build: ./elasticsearch712
+    container_name: elasticsearch712
+    volumes:
+      - ./elasticsearch712/log:/var/log/elasticsearch
+      - ./elasticsearch712/data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    #      - ELASTICSEARCH_HEAP_SIZE=1g
+    expose:
+      - 9200
+      - 9300
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - ./redis/data:/data
+    expose:
+      - "6379"
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  memcached:
+    image: memcached:latest
+    container_name: memcached
+    expose:
+      - 11211
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  rabbitmq:
+    build: ./rabbitmq
+    container_name: rabbitmq
+    volumes:
+      - ./rabbitmq/logs:/var/log/rabbitmq/log
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: 12345@
+    expose:
+      - 15672
+      - 5672
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
