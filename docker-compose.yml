@@ -66,6 +66,38 @@ services:
       - 4.4.4.4
     network_mode: "host"
 
+  php81:
+    build: ./php81/php-fpm
+    container_name: php81
+    working_dir: /var/www/html/docker-source
+    volumes:
+      - .:/var/www/html/docker-source
+      - ./php81/supervisor/conf.d:/etc/supervisor/conf.d
+      - ./php81/supervisor/logs:/var/log/cache
+      - ./php81/php-fpm/conf.d/php-ini-overrides.ini:/etc/php/8.1/fpm/conf.d/99-overrides.ini
+    expose:
+      - 9000
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
+  php82:
+    build: ./php82/php-fpm
+    container_name: php82
+    working_dir: /var/www/html/docker-source
+    volumes:
+      - .:/var/www/html/docker-source
+      - ./php82/supervisor/conf.d:/etc/supervisor/conf.d
+      - ./php82/supervisor/logs:/var/log/cache
+      - ./php82/php-fpm/conf.d/php-ini-overrides.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini
+    expose:
+      - 9000
+    dns:
+      - 8.8.8.8
+      - 4.4.4.4
+    network_mode: "host"
+
   percona8:
     build: ./percona8
     container_name: percona8
